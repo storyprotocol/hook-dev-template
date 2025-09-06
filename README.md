@@ -1,13 +1,24 @@
-## Story - Smart Contract Tutorial
+# Lock License Hook
 
-Building Story [hooks](https://docs.story.foundation/concepts/hooks).
+`LockLicenseHook.sol` lets you stop/lock license minting.
 
-## Get Started
+## Quick Start
 
-1. `yarn`
+### Prerequisites
 
-2. Run the tests
+Please install [Foundry / Foundryup](https://github.com/gakonst/foundry)
 
-    2a. Run all the tests: `forge test --fork-url https://aeneid.storyrpc.io/`
+### Install dependencies
 
-    2b. Run a specific test: `forge test --fork-url https://aeneid.storyrpc.io/ --match-path test/IPUSDPriceHook.t.sol`
+```sh
+yarn # this installs packages
+forge build # this builds
+```
+
+### Run the Tests
+
+Run this script to run a live forked test on Aeneid (Story testnet)
+
+```
+forge test --fork-url https://aeneid.storyrpc.io/
+```
