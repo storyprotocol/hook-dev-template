@@ -1,5 +1,5 @@
 @openzeppelin/=node_modules/@openzeppelin/
-@openzeppelin-foundry-upgrades/=node_modules/@openzeppelin/foundry-upgrades
+@openzeppelin-foundry-upgrades/=lib/openzeppelin-foundry-upgrades/
 @storyprotocol/core/=node_modules/@story-protocol/protocol-core/contracts/
 @storyprotocol/periphery/=node_modules/@story-protocol/protocol-periphery/
 @storyprotocol/test/=node_modules/@story-protocol/protocol-core/test/foundry/
