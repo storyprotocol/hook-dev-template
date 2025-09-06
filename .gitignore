@@ -4,21 +4,19 @@ out/
 artifacts/
 forge-cache/
 
+package-lock.json
+
 # Ignores development broadcast logs
 # !/broadcast
 deployments
 broadcast
 !/broadcast/*/1/
 
-# Docs
-docs/
-
 # Dotenv file
 .env
 
 .idea/
 node_modules/
-yarn.lock
 
 .vscode
 .DS_Store
@@ -33,6 +31,3 @@ typechain
 
 # converage
 lcov.info
-
-# forge lib folder
-lib/
