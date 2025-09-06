@@ -5,7 +5,7 @@ import { Licensing } from "@storyprotocol/core/lib/Licensing.sol";
 import { PILFlavors } from "@storyprotocol/core/lib/PILFlavors.sol";
 
 import { BaseTest } from "@storyprotocol/periphery/test/utils/BaseTest.t.sol";
-import { LockLicenseHook } from "../src/LockLicenseHook.sol";
+import { LockLicenseHook } from "../contracts/LockLicenseHook.sol";
 
 contract LockLicenseHookTest is BaseTest {
     address public ipId;
