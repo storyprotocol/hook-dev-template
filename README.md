@@ -1,6 +1,6 @@
-# Hook Template: `LockLicenseHook.sol`
+# New Hook Template: `LicenseCallerWhitelistHook.sol`
 
-This is a template repository meant to show developers how to write and test their own license hooks on [Story](https://docs.story.foundation). This template uses `LockLicenseHook.sol` as an example, which is the most basic form of a license hook that lets you stop/lock license minting.
+This is a forked template repository that contains source code and tests for `LicenseCallerWhitelistHook.sol`. This allows you to gate who can mint your license by their address.
 
 ## Quick Start
 
