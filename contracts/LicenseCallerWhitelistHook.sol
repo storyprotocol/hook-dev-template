@@ -6,6 +6,8 @@ import { BaseModule } from "@storyprotocol/core/modules/BaseModule.sol";
 import { AccessControlled } from "@storyprotocol/core/access/AccessControlled.sol";
 import { ILicensingHook } from "@storyprotocol/core/interfaces/modules/licensing/ILicensingHook.sol";
 import { ILicenseTemplate } from "@storyprotocol/core/interfaces/modules/licensing/ILicenseTemplate.sol";
+import { IIPAccount } from "@storyprotocol/core/interfaces/IIPAccount.sol";
+import { ILicenseRegistry } from "@storyprotocol/core/interfaces/registries/ILicenseRegistry.sol";
 
 /// @title License Caller Whitelist Hook
 /// @notice This hook enforces whitelist restrictions for license token minting.
@@ -16,6 +18,8 @@ import { ILicenseTemplate } from "@storyprotocol/core/interfaces/modules/licensi
 ///      A whitelisted address can mint tokens for any receiver address.
 contract LicenseCallerWhitelistHook is BaseModule, AccessControlled, ILicensingHook {
     string public constant override name = "LICENSE_CALLER_WHITELIST_HOOK";
+
+    ILicenseRegistry public immutable LICENSE_REGISTRY;
 
     /// @notice Stores the whitelist status for addresses for a given license.
     /// @dev The key is keccak256(licensorIpId, licenseTemplate, licenseTermsId, minterAddress).
@@ -52,8 +56,11 @@ contract LicenseCallerWhitelistHook is BaseModule, AccessControlled, ILicensingH
 
     constructor(
         address accessController,
-        address ipAssetRegistry
-    ) AccessControlled(accessController, ipAssetRegistry) {}
+        address ipAssetRegistry,
+        address licenseRegistry
+    ) AccessControlled(accessController, ipAssetRegistry) {
+        LICENSE_REGISTRY = ILicenseRegistry(licenseRegistry);
+    }
 
     /// @notice Add an address to the whitelist for a specific license
     /// @param licensorIpId The licensor IP id
@@ -66,8 +73,15 @@ contract LicenseCallerWhitelistHook is BaseModule, AccessControlled, ILicensingH
         uint256 licenseTermsId,
         address minter
     ) external verifyPermission(licensorIpId) {
-        bytes32 key = keccak256(abi.encodePacked(licensorIpId, licenseTemplate, licenseTermsId, minter));
+        require(
+            LICENSE_REGISTRY.hasIpAttachedLicenseTerms(licensorIpId, licenseTemplate, licenseTermsId),
+            "License not attached to IP"
+        );
+
+        address ipOwner = IIPAccount(payable(licensorIpId)).owner();
+        bytes32 key = keccak256(abi.encodePacked(ipOwner, licensorIpId, licenseTemplate, licenseTermsId, minter));
         if (whitelist[key]) revert LicenseCallerWhitelistHook_AddressAlreadyWhitelisted(minter);
+
         whitelist[key] = true;
         emit AddressWhitelisted(licensorIpId, licenseTemplate, licenseTermsId, minter);
     }
@@ -83,8 +97,10 @@ contract LicenseCallerWhitelistHook is BaseModule, AccessControlled, ILicensingH
         uint256 licenseTermsId,
         address minter
     ) external verifyPermission(licensorIpId) {
-        bytes32 key = keccak256(abi.encodePacked(licensorIpId, licenseTemplate, licenseTermsId, minter));
+        address ipOwner = IIPAccount(payable(licensorIpId)).owner();
+        bytes32 key = keccak256(abi.encodePacked(ipOwner, licensorIpId, licenseTemplate, licenseTermsId, minter));
         if (!whitelist[key]) revert LicenseCallerWhitelistHook_AddressNotInWhitelist(minter);
+
         whitelist[key] = false;
         emit AddressRemovedFromWhitelist(licensorIpId, licenseTemplate, licenseTermsId, minter);
     }
@@ -101,7 +117,8 @@ contract LicenseCallerWhitelistHook is BaseModule, AccessControlled, ILicensingH
         uint256 licenseTermsId,
         address minter
     ) external view returns (bool isWhitelisted) {
-        bytes32 key = keccak256(abi.encodePacked(licensorIpId, licenseTemplate, licenseTermsId, minter));
+        address ipOwner = IIPAccount(payable(licensorIpId)).owner();
+        bytes32 key = keccak256(abi.encodePacked(ipOwner, licensorIpId, licenseTemplate, licenseTermsId, minter));
         return whitelist[key];
     }
 
@@ -192,7 +209,8 @@ contract LicenseCallerWhitelistHook is BaseModule, AccessControlled, ILicensingH
         uint256 licenseTermsId,
         address minter
     ) internal view {
-        bytes32 key = keccak256(abi.encodePacked(licensorIpId, licenseTemplate, licenseTermsId, minter));
+        address ipOwner = IIPAccount(payable(licensorIpId)).owner();
+        bytes32 key = keccak256(abi.encodePacked(ipOwner, licensorIpId, licenseTemplate, licenseTermsId, minter));
         if (!whitelist[key]) {
             revert LicenseCallerWhitelistHook_AddressNotWhitelisted(minter);
         }

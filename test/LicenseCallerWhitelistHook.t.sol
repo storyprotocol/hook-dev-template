@@ -34,6 +34,8 @@ contract LicenseCallerWhitelistHookTest is BaseTest {
     address internal ACCESS_CONTROLLER = 0xcCF37d0a503Ee1D4C11208672e622ed3DFB2275a;
     // Protocol Core - ModuleRegistry
     address internal MODULE_REGISTRY = 0x022DBAAeA5D8fB31a0Ad793335e39Ced5D631fa5;
+    // Protocol Core - LicenseRegistry
+    address internal LICENSE_REGISTRY = 0x529a750E02d8E2f15649c13D69a465286a780e24;
     // Revenue Token - MERC20
     MockERC20 internal MERC20 = MockERC20(0xF2104833d386a2734a4eB3B8ad6FC6812F29E38E);
 
@@ -45,7 +47,11 @@ contract LicenseCallerWhitelistHookTest is BaseTest {
     function setUp() public override {
         super.setUp();
 
-        LICENSE_CALLER_WHITELIST_HOOK = new LicenseCallerWhitelistHook(ACCESS_CONTROLLER, address(IP_ASSET_REGISTRY));
+        LICENSE_CALLER_WHITELIST_HOOK = new LicenseCallerWhitelistHook(
+            ACCESS_CONTROLLER,
+            address(IP_ASSET_REGISTRY),
+            LICENSE_REGISTRY
+        );
 
         // Make the registry *think* the hook is registered everywhere in this test
         vm.mockCall(
